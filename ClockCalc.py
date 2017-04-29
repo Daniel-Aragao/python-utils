@@ -4,7 +4,19 @@ pattern = r'(\d+):(\d+):(\d+)'
 
 
 class Hour:
+    """
+    A hour representation
+    """
     def __init__(self, h, m, s, is_negative=False, hour_type=24, hour_12_turn='AM'):
+        """
+        Declare a Hour type
+        :param h: int Hours value
+        :param m: int Minutes value
+        :param s: int Seconds value
+        :param is_negative: bool True for negative times and False for positive (defualt)
+        :param hour_type: int 12 to 12's clock and 24 for 24's clock (default) 
+        :param hour_12_turn: string 'AM'(defualt) and 'PM' in case of 12's clock 
+        """
         self.hour = h
         self.minute = m
         self.second = s
@@ -13,6 +25,12 @@ class Hour:
         self.hour_12_turn = hour_12_turn
 
     def diference(self, hour2):
+        """
+        Subtract this object time for the hour2 inserted 
+        as parameter and return another Hour object
+        :param hour2: ClockCalc.Hour 
+        :return: ClockCalc.Hour 
+        """
         hour = self.clone()
 
         if hour.type != 24:
@@ -56,6 +74,12 @@ class Hour:
         return hour
 
     def inverse(self):
+        """
+        when the hour is negative => convert to positive hour
+            Ex.1: -00:01:30 => 11:58:30 PM
+            Ex.2: -00:01:30 => 23:58:30
+        :return: ClockCalc.Hour 
+        """
         hour = Hour(24, 0, 0)
 
         clone = self.clone()
@@ -67,11 +91,16 @@ class Hour:
         if self.type != 24:
             hour = hour.convert_to_12()
 
-        hour.is_negative = not hour.is_negative
+        hour.is_negative = not self.is_negative
 
         return hour
 
     def convert_to_24(self):
+        """
+        Convert this hour object in another one, changing
+        the time type to 24
+        :return: ClockCalc.Hour 
+        """
         if self.type == 24:
             return self.clone()
 
@@ -84,6 +113,11 @@ class Hour:
         return hour
 
     def convert_to_12(self):
+        """
+        Convert this hour object in another one, changing
+        the time type to 12
+        :return: ClockCalc.Hour 
+        """
         if self.type == 12:
             return self.clone()
 
@@ -101,6 +135,15 @@ class Hour:
         return hour
 
     def __str__(self):
+        """
+        Formated string 
+            Ex.1: '11:58:30 PM'
+            Ex.2: '18:15:47'
+        OBS.: negative numbers don't have the turn indication on 12's clock, but still
+        obeying the policy of 12's clock and will show again in case it becames positive
+        again
+        :return: string
+        """
         string = '{0:02}:{1:02}:{2:02}'.format(self.hour, self.minute, self.second)
         if self.is_negative:
             string = '-' + string
@@ -110,11 +153,24 @@ class Hour:
         return string
 
     def clone(self):
+        """
+        Clone this object in a new one with the same values
+        for the self.properties
+        :return: ClockCalc.Hour 
+        """
         return Hour(self.hour, self.minute, self.second,
                     self.is_negative, self.type, self.hour_12_turn)
 
 
 def diference(hour1, hour2):
+    """
+    Receive two hours patterns and return the diference
+    obs.: For this work will be necessary to obey the 
+    24's clock rules
+    :param hour1: Ex.: '18:15:47'
+    :param hour2: '17:14:46'
+    :return: string
+    """
     first = re.match(pattern, hour1)
     second = re.match(pattern, hour2)
 
